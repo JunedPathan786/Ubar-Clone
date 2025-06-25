@@ -157,6 +157,7 @@ curl -X POST http://localhost:3000/users/login \
     "email": "john.doe@example.com",
     "password": "yourpassword"
 
+```
 
 # User Profile Endpoint
 
