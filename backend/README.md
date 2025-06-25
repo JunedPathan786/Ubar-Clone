@@ -253,6 +253,7 @@ Logs out the authenticated user by blacklisting the JWT token and clearing the c
     {
       "message": "Token is blacklisted."
     }
+    ```
   
 ---
 
