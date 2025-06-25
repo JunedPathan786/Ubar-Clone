@@ -81,6 +81,7 @@ curl -X POST http://localhost:3000/users/register \
     "password": "yourpassword"
   }'
 ```
+---
 
 # User Login Endpoint
 
@@ -158,6 +159,7 @@ curl -X POST http://localhost:3000/users/login \
     "password": "yourpassword"
 
 ```
+---
 
 # User Profile Endpoint
 
