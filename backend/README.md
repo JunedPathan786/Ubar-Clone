@@ -156,3 +156,97 @@ curl -X POST http://localhost:3000/users/login \
   -d '{
     "email": "john.doe@example.com",
     "password": "yourpassword"
+
+
+# User Profile Endpoint
+
+## GET `/users/profile`
+
+Returns the authenticated user's profile information.  
+**Requires authentication (JWT token in cookie or Authorization header).**
+
+### Request Headers
+
+- `Cookie: token=<jwt_token>`  
+  or  
+- `Authorization: Bearer <jwt_token>`
+
+### Responses
+
+- **200 OK**
+  - Returns the user profile:
+    ```json
+    {
+      "_id": "...",
+      "fullname": {
+        "firstname": "...",
+        "lastname": "..."
+      },
+      "email": "...",
+      // other user fields
+    }
+    ```
+
+- **401 Unauthorized**
+  - No token provided, invalid token, or blacklisted token.
+    ```json
+    {
+      "message": "Access denied. No token provided."
+    }
+    ```
+    or
+    ```json
+    {
+      "message": "Invalid token."
+    }
+    ```
+    or
+    ```json
+    {
+      "message": "Token is blacklisted."
+    }
+    ```
+
+---
+
+# User Logout Endpoint
+
+## GET `/users/logout`
+
+Logs out the authenticated user by blacklisting the JWT token and clearing the cookie.  
+**Requires authentication (JWT token in cookie or Authorization header).**
+
+### Request Headers
+
+- `Cookie: token=<jwt_token>`  
+  or  
+- `Authorization: Bearer <jwt_token>`
+
+### Responses
+
+- **200 OK**
+  - Logout successful.
+    ```json
+    {
+      "message": "Logged out successfully"
+    }
+    ```
+
+- **401 Unauthorized**
+  - No token provided, invalid token, or blacklisted token.
+    ```json
+    {
+      "message": "Access denied. No token provided."
+    }
+    ```
+    or
+    ```json
+    {
+      "message": "Invalid token."
+    }
+    ```
+    or
+    ```json
+    {
+      "message": "Token is blacklisted."
+    }
