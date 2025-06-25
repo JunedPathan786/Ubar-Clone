@@ -257,105 +257,220 @@ Logs out the authenticated user by blacklisting the JWT token and clearing the c
   
 ---
 
-# Captain Registration Endpoint
+# Captain Routes Documentation
 
-## POST `/captains/register`
+## 1. Register Captain
+
+### POST `/captains/register`
 
 Registers a new captain (driver) with vehicle details.
 
-### Request Body
-
-Send a JSON object with the following structure:
+#### Request Body
 
 ```json
 {
   "fullname": {
-    "firstname": "Jane",
-    "lastname": "Smith"
+    "firstname": "Jane",      // required, min 3 chars
+    "lastname": "Smith"       // optional, min 3 chars if provided
   },
-  "email": "jane.smith@example.com",
-  "password": "yourpassword",
+  "email": "jane.smith@example.com", // required, must be valid email
+  "password": "yourpassword",        // required, min 6 chars
   "vehicle": {
-    "color": "Red",
-    "plate": "ABC123",
-    "capacity": 4,
-    "vehicleType": "car"
+    "color": "Red",                  // required, min 3 chars
+    "plate": "ABC123",               // required, min 3 chars
+    "capacity": 4,                   // required, integer >= 1
+    "vehicleType": "car"             // required, one of: "car", "bike", "auto"
   }
 }
 ```
 
-#### Field Requirements
-
-- `fullname.firstname` (string, required): Minimum 3 characters.
-- `fullname.lastname` (string, optional): Minimum 3 characters if provided.
-- `email` (string, required): Must be a valid email address.
-- `password` (string, required): Minimum 6 characters.
-- `vehicle.color` (string, required): Minimum 3 characters.
-- `vehicle.plate` (string, required): Minimum 3 characters.
-- `vehicle.capacity` (integer, required): Minimum value 1.
-- `vehicle.vehicleType` (string, required): Must be one of `"car"`, `"bike"`, or `"auto"`.
-
-### Responses
+#### Success Response
 
 - **201 Created**
-  - Captain registered successfully.
-  - Returns:
-    ```json
-    {
-      "token": "<jwt_token>",
-      "captain": {
-        "_id": "...",
-        "fullname": {
-          "firstname": "...",
-          "lastname": "..."
-        },
-        "email": "...",
-        "vehicle": {
-          "color": "...",
-          "plate": "...",
-          "capacity": ...,
-          "vehicleType": "..."
-        }
-        // other captain fields
-      }
-    }
-    ```
-
-- **400 Bad Request**
-  - Validation failed or required fields missing.
-  - Returns:
-    ```json
-    {
-      "errors": [
-        {
-          "msg": "Error message",
-          "param": "field",
-          "location": "body"
-        }
-      ]
-    }
-    ```
-
-- **409 Conflict**
-  - Email already exists.
-  - Returns:
-    ```json
-    {
-      "error": "Email already exists"
-    }
-    ```
-
-### Example
-
-```bash
-curl -X POST http://localhost:3000/captains/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "fullname": { "firstname": "Jane", "lastname": "Smith" },
+```json
+{
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "...",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
     "email": "jane.smith@example.com",
-    "password": "yourpassword",
     "vehicle": {
       "color": "Red",
       "plate": "ABC123",
       "capacity": 4,
       "vehicleType": "car"
+    }
+    // ...other captain fields
+  }
+}
+```
+
+#### Error Responses
+
+- **400 Bad Request** (validation errors)
+```json
+{
+  "errors": [
+    {
+      "msg": "First name must be at least 3 characters long",
+      "param": "fullname.firstname",
+      "location": "body"
+    }
+    // ...other errors
+  ]
+}
+```
+
+- **400 Bad Request** (email already exists)
+```json
+{
+  "message": "Captain with this email already exists"
+}
+```
+
+---
+
+## 2. Captain Login
+
+### POST `/captains/login`
+
+#### Request Body
+
+```json
+{
+  "email": "jane.smith@example.com", // required, must be valid email
+  "password": "yourpassword"         // required, min 6 chars
+}
+```
+
+#### Success Response
+
+- **200 OK**
+```json
+{
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "...",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+    // ...other captain fields
+  }
+}
+```
+
+#### Error Responses
+
+- **400 Bad Request** (validation errors)
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid Email",
+      "param": "email",
+      "location": "body"
+    }
+    // ...other errors
+  ]
+}
+```
+
+- **401 Unauthorized** (invalid credentials)
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
+
+## 3. Captain Profile
+
+### GET `/captains/profile`
+
+**Requires authentication (JWT token in cookie or Authorization header).**
+
+#### Success Response
+
+- **200 OK**
+```json
+{
+  "captain": {
+    "_id": "...",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+    // ...other captain fields
+  }
+}
+```
+
+#### Error Responses
+
+- **401 Unauthorized**
+```json
+{
+  "message": "Access denied. No token provided."
+}
+// or
+{
+  "message": "Invalid token."
+}
+// or
+{
+  "message": "Token is blacklisted."
+}
+```
+
+---
+
+## 4. Captain Logout
+
+### GET `/captains/logout`
+
+**Requires authentication (JWT token in cookie or Authorization header).**
+
+#### Success Response
+
+- **200 OK**
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+#### Error Responses
+
+- **401 Unauthorized**
+```json
+{
+  "message": "Access denied. No token provided."
+}
+// or
+{
+  "message": "Invalid token."
+}
+// or
+{
+  "message": "Token is blacklisted."
+}
+```
