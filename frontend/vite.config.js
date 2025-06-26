@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: true, // important for exposing via ngrok
     allowedHosts: [
-      "c58f-2409-4081-159f-1009-388d-4b96-bf37-22bc.ngrok-free.app", // your ngrok domain
+      "d7d3-2409-4081-159f-1009-6d06-58c-f048-30a9.ngrok-free.app", // your ngrok domain
     ],
   },
 });
