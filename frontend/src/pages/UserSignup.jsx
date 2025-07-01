@@ -5,10 +5,10 @@ import { UserDataContext } from '../context/userContext'
 
 
 const UserSignup = () => {
-    const [firstName, setfirstName] = useState('')
-    const [lastName, setlastName] = useState('')
     const [email, setemail] = useState('')
     const [password, setpassword] = useState('')
+    const [firstName, setfirstName] = useState('')
+    const [lastName, setlastName] = useState('')
     const [userData, setuserData] = useState({})
 
     const navigate = useNavigate();
