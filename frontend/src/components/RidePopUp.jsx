@@ -1,8 +1,6 @@
 import React from 'react'
 
 const RidePopUp = (props) => {
-    console.log("🐛 Ride in RidePopUp:", props.ride);
-    console.log("👤 User Object:", props.ride?.user);
 
     return (
         <div>
