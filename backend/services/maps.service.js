@@ -9,7 +9,7 @@ module.exports.getAddressCoordinate = async (address) => {
 
   try {
     const response = await axios.get(url);
-    console.log("🌐 Full Google API Response:", response.data);
+    // console.log("🌐 Full Google API Response:", response.data);
 
     if (response.data.status === "OK") {
       const location = response.data.results[0].geometry.location;
@@ -92,16 +92,4 @@ module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
   return captains;
 };
 
-module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
-  // radius in km
 
-  const captains = await captainModel.find({
-    location: {
-      $geoWithin: {
-        $centerSphere: [[ltd, lng], radius / 6371],
-      },
-    },
-  });
-
-  return captains;
-};

@@ -1,5 +1,4 @@
-
-import React, { createContext, useEffect } from 'react';
+ import React, { createContext, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 export const SocketContext = createContext();
@@ -18,7 +17,6 @@ const SocketProvider = ({ children }) => {
         });
 
     }, []);
-
 
 
     return (

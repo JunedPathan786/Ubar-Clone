@@ -10,7 +10,8 @@ import WaitingForDriver from '../components/WaitingForDriver'
 import axios from 'axios';
 import { SocketContext } from '../context/SocketContext'
 import { UserDataContext } from '../context/userContext'
-
+import { useNavigate } from 'react-router-dom'
+import LiveTracking from '../components/LiveTracking';
 
 const Home = () => {
   const [pickup, setpickup] = useState('')
@@ -33,19 +34,26 @@ const Home = () => {
   const [vehicleType, setvehicleType] = useState(null);
   const [ride, setRide] = useState(null)
 
+  const navigate = useNavigate()
 
   const { socket } = useContext(SocketContext)
   const { user } = useContext(UserDataContext)
 
   useEffect(() => {
     socket.emit("join", { userType: "user", userId: user._id })
-  }, [user])
+  },[user])
 
   socket.on('ride-confirmed', ride => {
     setvehicleFound(false)
     setwaitingForDriver(true)
     setRide(ride)
   })
+
+    socket.on('ride-started', ride => {
+        console.log("ride")
+        setwaitingForDriver(false)
+        navigate('/riding', { state: { ride } }) // Updated navigate to include ride data
+    })
 
   const handlePickupChange = async (e) => {
     setpickup(e.target.value)
@@ -189,7 +197,7 @@ const Home = () => {
     <div className='h-screen relative overflow-hidden'>
       <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/5/58/Uber_logo_2018.svg" alt="" />
       <div className='h-screen w-full'>
-        <img className="h-full w-full object-cover" src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif" alt="" />
+          <LiveTracking />
       </div>
       <div className='flex flex-col absolute justify-end h-screen w-full top-0'>
         <div className='h-[30%] p-6 bg-white relative'>
